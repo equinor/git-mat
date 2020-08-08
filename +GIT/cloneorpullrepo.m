@@ -14,8 +14,11 @@ function cloneorpullrepo(folPath,repo,update,branch)
 % DESCRIPTION:
 % Hint: Call function from folder where repo shall be cloned and use
 % relative folder path
+%
+% EXAMPLE:
+% GIT.cloneorpullrepo(pwd);
 
-narginchk(1,3);
+narginchk(1,4);
 
 if nargin < 3
     update = false;
@@ -52,7 +55,7 @@ elseif update
     end
     
     if behind > 0
-        fprintf(1,'Pulls branch %s from repo %s is already up to date\n',branch,folPath);
+        fprintf(1,'Pulls branch %s from repo %s\n',branch,folPath);
         git('pull');
     else
         fprintf(1,'Repo %s is already up to date\n',folPath);
