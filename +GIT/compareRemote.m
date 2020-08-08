@@ -2,8 +2,9 @@ function [ahead, behind] = compareRemote(folPath,branch)
 % Get number of commits differing between local and remote git repo
 % function [ahead, behind] = compareRemote(folPath,branch)
 %
-% INPUT:
-%  - branch
+% OPTIONAL INPUT:
+%  - folPath - Folder to compare. Defaults to pwd.
+%  - branch  - Branch to compare. Defaults to GIT.getCurrBranch()
 %
 % OUTPUT:
 %  - ahead  - Number of commits local is ahead of remote
@@ -29,7 +30,7 @@ if nargin < 2 || isempty(branch)
     branch = GIT.getCurrBranch();
 end
 
-if ~isfolder('.git')
+if ~GIT.isrepo()
     error('GIT:compareRemote:notRepo','Folder %s does not contain a git repo.',pwd);
 end
 

@@ -1,4 +1,4 @@
-function [TF, T] = isdirty(folPath)
+ function [TF, T] = isdirty(folPath)
 % Check if there are changes not committed in tree
 % function [TF,T] = isdirty(folPath)
 %
@@ -12,13 +12,16 @@ function [TF, T] = isdirty(folPath)
 % Check if there are changes not committed in tree.
 % NB! Does not compare against remote.
 
-if nargin > 0
+if nargin > 0 && ~isempty(folPath)
+    if ~isfolder(folPath)
+        error('GIT:isdirty:folderNotFound','Folder %s is not found',folPath);
+    end
     currDir = pwd;
     c = onCleanup(@()cd(currDir));
-    cd(folPath)
+    cd(folPath);
 end
 
-if ~isfolder('.git')
+if ~GIT.isrepo()
     error('GIT:isdirty:notRepo','Folder %s does not contain a git repo.',pwd);
 end
 % git status is porcelain, should use plumbing

@@ -11,16 +11,16 @@ function br = getCurrBranch(folPath)
 % DESCRIPTION:
 % Get name of current branch
 
-if nargin > 0
-    currDir = pwd;
-    c = onCleanup(@()cd(currDir));
+if nargin > 0 && ~isempty(folPath)
     if ~isfolder(folPath)
         error('GIT:getCurrBranch:folderNotFound','Folder %s is not found',folPath);
     end
+    currDir = pwd;
+    c = onCleanup(@()cd(currDir));
     cd(folPath);
 end
 
-if ~isfolder('.git')
+if ~GIT.isrepo()
     error('GIT:getCurrBranch:notRepo','Folder %s does not contain a git repo.',pwd);
 end
 

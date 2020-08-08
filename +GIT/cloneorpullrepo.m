@@ -23,7 +23,7 @@ narginchk(1,4);
 if nargin < 3
     update = false;
 end
-
+        
 if nargin < 4
     branch = 'master';
 end
