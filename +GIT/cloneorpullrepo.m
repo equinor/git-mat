@@ -39,7 +39,7 @@ if ~isfolder(folPath)
 elseif update
     currBranch = GIT.getCurrBranch(folPath);
     if ~strcmp(currBranch,branch)
-        warning('cloneGitInterFaces:notInMasterBranch','Repo %s is not updated because not in branch %',folPath,branch);
+        warning('cloneGitInterFaces:notInMasterBranch','Repo %s is not updated because not in branch %s',folPath,branch);
         return
     end
     
