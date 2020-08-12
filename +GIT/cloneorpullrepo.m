@@ -55,7 +55,10 @@ elseif update
     end
     
     if behind > 0
-        fprintf(1,'Pulls branch %s from repo %s\n',branch,folPath);
+        currDir = pwd;
+        c = onCleanup(@()cd(currDir));
+        cd(folPath);
+        fprintf(1,'Pulls branch %s from repo %s\n',branch,repo);
         git('pull');
     else
         fprintf(1,'Repo %s is already up to date\n',folPath);
