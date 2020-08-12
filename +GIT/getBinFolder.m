@@ -22,7 +22,7 @@ if ispc
         if isfolder(allUsers)
             fol = allUsers;
         else
-            currUser = fullpath(fullfile(strtrim(evalc('!echo %APPDATA%')),'..','Local','Programs','Git','bin'));
+            currUser = fullfile(strtrim(evalc('!echo %APPDATA%')),'..','Local','Programs','Git','bin');
             if isfolder(currUser)
                 fol = currUser;
             end

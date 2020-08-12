@@ -61,11 +61,13 @@ function T = parseStatus(status)
 % !           !    ignored
 % -------------------------------------------------
 if ~isempty(status)
-    C = mat2col(strsplit(status,newline));
-    C(cellfun(@isempty,C)) = [];
-    C = cellfun(@strtrim,C,'UniformOutput',false);
+    str = strsplit(status,newline);
+    str = cellfun(@strtrim,str,'UniformOutput',false);
+    str(cellfun(@isempty,str)) = [];
+    C = str(:);
     C = replace(C,'  ',' ');
     C = replace(C,' -> ','->');
-    T = cell2table(cat(1,C{:}),'VariableNames',{'Status','File'});
+    D = cellfun(@strsplit,C,'UniformOutput',false);
+    T = cell2table(cat(1,D{:}),'VariableNames',{'Status','File'});
 end
 end
