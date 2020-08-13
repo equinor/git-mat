@@ -37,6 +37,7 @@ if ~isfolder(folPath)
         git(['checkout ' branch]);
     end
 elseif update
+    % todo: get remote?
     currBranch = GIT.getCurrBranch(folPath);
     if ~strcmp(currBranch,branch)
         warning('cloneGitInterFaces:notInMasterBranch','Repo %s is not updated because not in branch %s',folPath,branch);
@@ -58,7 +59,7 @@ elseif update
         currDir = pwd;
         c = onCleanup(@()cd(currDir));
         cd(folPath);
-        fprintf(1,'Pulls branch %s from repo %s\n',branch,repo);
+        fprintf(1,'Pulls branch %s from %s\n',branch,folPath);
         git('pull');
     else
         fprintf(1,'Repo %s is already up to date\n',folPath);
