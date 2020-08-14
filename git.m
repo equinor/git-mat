@@ -21,7 +21,7 @@ gitPath = GIT.getBinFolder();
 if isempty(gitPath)
     cmdstr = strjoin(['git' varargin]);
 else
-    cmdstr = strjoin([fullfile(gitPath,'git.exe') varargin]);
+    cmdstr = strjoin([['"' fullfile(gitPath,'git.exe') '"'] varargin]);
 end
 
 % Execute the git command.
