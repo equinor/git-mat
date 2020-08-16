@@ -22,14 +22,14 @@ if nargin > 0
 end
 
 if ispc
-    folPath = getGitFolder();
+    folPath = GIT.getBinFolder();
     if isempty(folPath)
         error('gitbash:gitNotFound','Git is not found.');
     end
     
     % What is the difference of these bash-windows?
-    system(sprintf('start "" "%s" --login',fullfile(getGitFolder,'sh.exe')));
-    %     system(sprintf('start "" "%s" --login',fullfile(getGitFolder,'bash.exe')));
+    system(sprintf('start "" "%s" --login',fullfile(GIT.getBinFolder,'sh.exe')));
+    %     system(sprintf('start "" "%s" --login',fullfile(GIT.getBinFolder,'bash.exe')));
     %     system([fullfile(getGitFolder,'..','git-bash.exe') '&']);
 elseif ismac
     % cheating by only opening terminal
