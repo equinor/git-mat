@@ -34,8 +34,8 @@ if ~GIT.isrepo()
     error('GIT:compareRemote:notRepo','Folder %s does not contain a git repo.',pwd);
 end
 
-git('fetch --all');
-git('fetch --prune');
+[~,~] = git('fetch --all');
+[~,~] = git('fetch --prune');
 [~,result] = git('branch -vv');
 C = cellfun(@strtrim,strsplit(result,newline),'UniformOutput',false);
 indBranch = startsWith(C,[branch ' ']) | startsWith(C,['* ' branch ' ']);
