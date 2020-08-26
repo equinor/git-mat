@@ -1,4 +1,4 @@
- function [TF, T] = isdirty(folPath)
+function [TF, T] = isdirty(folPath)
 % Check if there are changes not committed in tree
 % function [TF,T] = isdirty(folPath)
 %
@@ -69,5 +69,7 @@ if ~isempty(status)
     C = replace(C,' -> ','->');
     D = cellfun(@strsplit,C,'UniformOutput',false);
     T = cell2table(cat(1,D{:}),'VariableNames',{'Status','File'});
+else
+    T = cell2table(cell(0,2),'VariableNames',{'Status','File'});
 end
 end
