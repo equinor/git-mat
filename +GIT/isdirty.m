@@ -65,11 +65,15 @@ if ~isempty(status)
     str = cellfun(@strtrim,str,'UniformOutput',false);
     str(cellfun(@isempty,str)) = [];
     C = str(:);
-    C = replace(C,'  ',' ');
-    C = replace(C,' -> ','->');
-    D = cellfun(@strsplit,C,'UniformOutput',false);
-    T = cell2table(cat(1,D{:}),'VariableNames',{'Status','File'});
+    ind = regexp(C,'\s','once');
+    for k = size(C,1):-1:1
+        if numel(ind{k}) > 0
+            D{k,2} = strtrim(C{k}(ind{k}:end));
+            D{k,1} = strtrim(C{k}(1:ind{k}));
+        end
+    end
+    T = cell2table(D,'VariableNames',{'Status' 'File'});
 else
-    T = cell2table(cell(0,2),'VariableNames',{'Status','File'});
+    T = cell2table(cell(0,2),'VariableNames',{'Status' 'File'});
 end
 end
