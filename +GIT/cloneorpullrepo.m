@@ -1,6 +1,6 @@
-function cloneorpullrepo(folPath,repo,update,branch)
+function cloneorpullrepo(folPath,repo,update,branch,verbose)
 % Clone or fetch repo
-% function cloneorpullrepo(folPath,repo,update,branch)
+% function cloneorpullrepo(folPath,repo,update,branch,verbose)
 %
 % INPUT:
 %  - folPath - Path to folder
@@ -10,6 +10,8 @@ function cloneorpullrepo(folPath,repo,update,branch)
 %  - repo    - URL to repo.
 %              Defaults to sprintf('https://github.com/Equinor/%s.git',folPath)
 %  - branch  - Defaults to 'master'
+%  - verbose - Set false to silence status output.
+%              Defaults to true
 %
 % DESCRIPTION:
 % Hint: Call function from folder where repo shall be cloned and use
@@ -18,14 +20,18 @@ function cloneorpullrepo(folPath,repo,update,branch)
 % EXAMPLE:
 % GIT.cloneorpullrepo(pwd);
 
-narginchk(1,4);
+narginchk(1,5);
 
-if nargin < 3
+if ~exist('update','var') || isempty(update)
     update = false;
 end
 
-if nargin < 4
+if ~exist('branch','var') || isempty(branch)
     branch = 'master';
+end
+
+if ~exist('verbose','var') || isempty(verbose)
+    verbose = true;
 end
 
 if ~isfolder(folPath)
@@ -59,9 +65,13 @@ elseif update
         currDir = pwd;
         c = onCleanup(@()cd(currDir));
         cd(folPath);
-        fprintf(1,'Pulls branch %s from %s\n',branch,folPath);
+        if verbose
+            fprintf(1,'Pulls branch %s from %s\n',branch,folPath);
+        end
         git('pull');
     else
-        fprintf(1,'Repo %s is already up to date\n',folPath);
+        if verbose
+            fprintf(1,'Repo %s is already up to date\n',folPath);
+        end
     end
 end
