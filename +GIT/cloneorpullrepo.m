@@ -9,7 +9,7 @@ function cloneorpullrepo(folPath,repo,update,branch,verbose)
 %  - update  - Set true to pull
 %  - repo    - URL to repo.
 %              Defaults to sprintf('https://github.com/Equinor/%s.git',folPath)
-%  - branch  - Defaults to 'master'
+%  - branch  - Defaults to current branch.
 %  - verbose - Set false to silence status output.
 %              Defaults to true
 %
@@ -26,8 +26,8 @@ if ~exist('update','var') || isempty(update)
     update = false;
 end
 
-if ~exist('branch','var') || isempty(branch)
-    branch = 'master';
+if ~exist('branch','var')
+    branch = '';
 end
 
 if ~exist('verbose','var') || isempty(verbose)
@@ -39,14 +39,18 @@ if ~isfolder(folPath)
         repo = sprintf('https://github.com/Equinor/%s.git',folPath);
     end
     git('clone',repo,folPath)
-    if ~strcmp(branch,'master')
+    if ~isempty(branch) && ~strcmp(branch,'master')
         git(['checkout ' branch]);
     end
 elseif update
-    % todo: get remote?
     currBranch = GIT.getCurrBranch(folPath);
+    
+    if isempty(branch)
+        branch = currBranch;
+    end
+    
     if ~strcmp(currBranch,branch)
-        warning('cloneGitInterFaces:notInMasterBranch','Repo %s is not updated because not in branch %s',folPath,branch);
+        warning('cloneGitInterFaces:notInMasterBranch','Repo %s is not updated because local branch is %s, not %s',folPath,currBranch,branch);
         return
     end
     
@@ -71,7 +75,11 @@ elseif update
         git('pull');
     else
         if verbose
-            fprintf(1,'Repo %s is already up to date\n',folPath);
+            if ahead < 0 && behind < 0
+                fprintf(1,'Repo %s, branch %s is only local. Not possible to update\n',folPath,branch);
+            else
+                fprintf(1,'Repo %s, branch %s is already up to date\n',folPath,branch);
+            end
         end
     end
 end
