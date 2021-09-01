@@ -9,7 +9,8 @@ function br = getCurrBranch(folPath)
 %  - br      - Name of checked out branch
 %
 % DESCRIPTION:
-% Get name of current branch
+% Get name of current branch.
+% Returns empty if head is detached
 
 if nargin > 0 && ~isempty(folPath)
     if ~isfolder(folPath)
@@ -24,5 +25,13 @@ if ~GIT.isrepo()
     error('GIT:getCurrBranch:notRepo','Folder %s does not contain a git repo.',pwd);
 end
 
-[~,br] = git('symbolic-ref --short HEAD');
+[status,br] = git('symbolic-ref --short HEAD');
 br = strtrim(br);
+if status > 0
+    if strcmp(br,'fatal: ref HEAD is not a symbolic ref')
+        warning('GIT:getCurrBranch:detached','Repo in %s is currently detached',pwd);
+        br = '';
+    else
+        error('GIT:getCurrBranch:unknownError','Repo in %s is in unknown checked out state',pwd);
+    end
+end
