@@ -46,9 +46,13 @@ if any(indBranch)
         branchStatus = C{indBranch};
         if contains(branchStatus,'ahead')
             ahead = str2double(replace(regexp(branchStatus,'ahead [\d]+','match'),'ahead ',''));
+        else
+            ahead = 0;
         end
         if contains(branchStatus,'behind')
             behind = str2double(replace(regexp(branchStatus,'behind [\d]+','match'),'behind ',''));
+        else
+            behind = 0;
         end
     end
 end
