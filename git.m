@@ -14,25 +14,29 @@ function varargout = git(varargin)
 % Check output arguments.
 nargoutchk(0,2)
 
-% Specify the location of the git executable.
-gitPath = GIT.getBinFolder();
-
-% Construct the git command.
-if isempty(gitPath)
-    cmdstr = strjoin(['git' varargin]);
-else
-    cmdstr = strjoin([['"' fullfile(gitPath,'git.exe') '"'] varargin]);
-end
-
-% Execute the git command.
-[status, cmdout] = system(cmdstr);
-
-switch nargout
-    case 0
-        disp(cmdout)
-    case 1
-        varargout{1} = status;
-    case 2
-        varargout{1} = status;
-        varargout{2} = cmdout;
+if nargin > 0
+    varargin = cellfun(@char,varargin,'UniformOutput',false);
+    
+    % Get the location of the git executable.
+    gitPath = GIT.getBinFolder();
+    
+    % Construct the git command.
+    if isempty(gitPath)
+        cmdstr = strjoin(['git' varargin]);
+    else
+        cmdstr = strjoin([['"' fullfile(gitPath,'git.exe') '"'] varargin]);
+    end
+    
+    % Execute the git command.
+    [status, cmdout] = system(cmdstr);
+    
+    switch nargout
+        case 0
+            disp(cmdout)
+        case 1
+            varargout{1} = status;
+        case 2
+            varargout{1} = status;
+            varargout{2} = cmdout;
+    end
 end
