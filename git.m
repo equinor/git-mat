@@ -27,6 +27,10 @@ if nargin > 0
         cmdstr = strjoin([['"' fullfile(gitPath,'git.exe') '"'] varargin]);
     end
     
+    if ismac
+        cmdstr = ['TERM=ansi; ' cmdstr];
+    end
+
     % Execute the git command.
     [status, cmdout] = system(cmdstr);
     
