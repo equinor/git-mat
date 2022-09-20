@@ -44,27 +44,32 @@ if ~isfolder(folPath)
     end
 elseif update
     currBranch = GIT.getCurrBranch(folPath);
-    
+
     if isempty(branch)
         branch = currBranch;
     end
-    
+
     if ~strcmp(currBranch,branch)
-        warning('cloneGitInterFaces:notInMasterBranch','Repo %s is not updated because local branch is %s, not %s',folPath,currBranch,branch);
+        warning('cloneorpullrepo:wrongBranch','Repo %s is not updated because local branch is %s, not %s',folPath,currBranch,branch);
         return
     end
-    
-    if GIT.isdirty(folPath)
-        warning('cloneGitInterFaces:dirtyTree','Repo %s is not updated because tree is dirty',folPath);
-        return
-    end
-    
+
     [ahead,behind] = GIT.compareRemote(folPath,currBranch);
-    if ahead > 0
-        warning('cloneGitInterFaces:localAhead','Repo %s is not updated because local is ahead of remote',folPath);
+    if ahead < 0 && behind < 0
+        warning('cloneorpullrepo:localBranch','Repo %s, branch %s is only local. Not possible to update\n',folPath,branch);
         return
     end
-    
+
+    if ahead > 0
+        warning('cloneorpullrepo:localAhead','Repo %s is not updated because local is ahead of remote',folPath);
+        return
+    end
+
+    if GIT.isdirty(folPath)
+        warning('cloneorpullrepo:dirtyTree','Repo %s is not updated because tree is dirty',folPath);
+        return
+    end
+
     if behind > 0
         currDir = pwd;
         c = onCleanup(@()cd(currDir));
@@ -75,11 +80,7 @@ elseif update
         git('pull');
     else
         if verbose
-            if ahead < 0 && behind < 0
-                fprintf(1,'Repo %s, branch %s is only local. Not possible to update\n',folPath,branch);
-            else
-                fprintf(1,'Repo %s, branch %s is already up to date\n',folPath,branch);
-            end
+            fprintf(1,'Repo %s, branch %s is already up to date\n',folPath,branch);
         end
     end
 end
