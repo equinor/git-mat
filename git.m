@@ -16,25 +16,26 @@ nargoutchk(0,2)
 
 if nargin > 0
     varargin = cellfun(@char,varargin,'UniformOutput',false);
-    
+
     % Get the location of the git executable.
     gitPath = GIT.getBinFolder();
-    
+
     % Construct the git command.
     if isempty(gitPath)
         cmdstr = strjoin(['git' varargin]);
     else
         cmdstr = strjoin([['"' fullfile(gitPath,'git.exe') '"'] varargin]);
     end
-    
+
     if ismac
         % Change terminal type to ansi to avoid system call freezing while waiting for user input and later strip ANSI colors
-        cmdstr = ['TERM=ansi; ' cmdstr ' | perl -pe ''s/\x1b\[[^m]+m//g;'''];
+        stripStr = ' | perl -pe ''s/\e\[[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]//g;s/\e[PX^_].*?\e\\//g;s/\e\][^\a]*(?:\a|\e\\)//g;s/\e[\[\]A-Z\\^_@]//g;''';
+        cmdstr = ['TERM=ansi; ' cmdstr stripStr];
     end
 
     % Execute the git command.
     [status, cmdout] = system(cmdstr);
-    
+
     switch nargout
         case 0
             disp(cmdout)
