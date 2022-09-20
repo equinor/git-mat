@@ -1,1 +1,4 @@
-/+GIT/*.asv
+*.asv
+*.orig
+*.rej
+*.bak
