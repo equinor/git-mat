@@ -3,14 +3,14 @@ function rollBack(folPath,numCommits,forceReset)
 % function rollBack(folPath,numCommits,forceReset)
 %
 % OPTIONAL:
-%  - folPath - Path to repo. Defaults to pwd.
+%  - folPath    - Path to repo. Defaults to pwd.
 %  - numCommits - Number of commits to roll back. Must be non-negative.
 %  - forceReset - Set true to skip checking for dirty tree.
 %
 % DESCRIPTION:
 % Roll back commits and reset repo.
 % If numCommits == 0, only reset will be done.
-% Checks if
+% Checks if tree is dirty before rolling back.
 %
 % EXAMPLE:
 % GIT.rollback();
