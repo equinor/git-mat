@@ -104,7 +104,7 @@ end
             [s,out] = git('pull');
         end
         % if fast forward fails, s will not be 0
-        if isdouble(s) && s == 0
+        if isa(s,'double') && s == 0
             if contains(out,"Already up to date")
                 if verbose
                     fprintf(1,'Repo %s, branch %s is already up to date\n',folPath,branch);
