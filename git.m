@@ -28,7 +28,8 @@ if nargin > 0
     end
     
     if ismac
-        cmdstr = ['TERM=ansi; ' cmdstr];
+        % Change terminal type to ansi to avoid system call freezing while waiting for user input and later strip ANSI colors
+        cmdstr = ['TERM=ansi; ' cmdstr ' | perl -pe ''s/\x1b\[[^m]+m//g;'''];
     end
 
     % Execute the git command.
