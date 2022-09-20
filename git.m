@@ -11,6 +11,8 @@ function varargout = git(varargin)
 % style, executes the git command and returns the output status STATUS and
 % the git output CMDOUT.
 
+% based on https://stackoverflow.com/a/42272702
+
 % Check output arguments.
 nargoutchk(0,2)
 
