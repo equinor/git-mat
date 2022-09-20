@@ -6,7 +6,7 @@ function cloneorpullrepo(folPath,repo,update,branch,verbose)
 %  - folPath - Path to folder
 %
 % OPTIONAL INPUT:
-%  - update  - Set true to pull
+%  - update  - Set true to pull if already cloned.
 %  - repo    - URL to repo.
 %              Defaults to sprintf('https://github.com/Equinor/%s.git',folPath)
 %  - branch  - Defaults to current branch.
