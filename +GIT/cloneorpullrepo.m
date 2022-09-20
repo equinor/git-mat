@@ -113,7 +113,7 @@ end
             elseif contains(out,sprintf('Fast-forward%s',newline))
                 TF = true;
             else
-                keyboard
+                % disp(out)
             end
         else
             % Check if branch exists, typically master has become main
