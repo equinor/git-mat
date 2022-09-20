@@ -5,7 +5,7 @@ function [TF, T] = isdirty(folPath)
 %  - folPath - Path to repo. Defaults to pwd.
 %
 % OUTPUT:
-%  - TF - True if any files are modified, removed or
+%  - TF - True if any files are modified, removed or untracked files exist.
 %  - T  - Parsed result from git status -s
 %
 % DESCRIPTION:
@@ -24,6 +24,7 @@ end
 if ~GIT.isrepo()
     error('GIT:isdirty:notRepo','Folder %s does not contain a git repo.',pwd);
 end
+
 % git status is porcelain, should use plumbing
 % https://stackoverflow.com/questions/3878624/how-do-i-programmatically-determine-if-there-are-uncommitted-changes
 [~,out] = git('status -s');
