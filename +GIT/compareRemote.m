@@ -42,8 +42,8 @@ indBranch = startsWith(C,[branch ' ']) | startsWith(C,['* ' branch ' ']);
 ahead = -1;
 behind = -1;
 if any(indBranch)
-    if contains(C{indBranch},'[')
-        branchStatus = C{indBranch};
+    if contains(C{indBranch},'[') && contains(C{indBranch},']')
+        branchStatus = C{indBranch}(1:strfind(C{indBranch},']'));
         if contains(branchStatus,'ahead')
             ahead = str2double(replace(regexp(branchStatus,'ahead [\d]+','match'),'ahead ',''));
         else
