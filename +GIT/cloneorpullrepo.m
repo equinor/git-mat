@@ -1,6 +1,6 @@
-function cloneorpullrepo(folPath,repo,update,branch,verbose)
+function cloneorpullrepo(folPath,update,repo,branch,verbose)
 % Clone or fetch repo
-% function cloneorpullrepo(folPath,repo,update,branch,verbose)
+% function cloneorpullrepo(folPath,update,repo,branch,verbose)
 %
 % INPUT:
 %  - folPath - Path to folder
@@ -15,37 +15,74 @@ function cloneorpullrepo(folPath,repo,update,branch,verbose)
 %
 % DESCRIPTION:
 % Hint: Call function from folder where repo shall be cloned and use
-% relative folder path
+% relative folder path.
+%
+% Will first try to pull using ff.
 %
 % EXAMPLE:
 % GIT.cloneorpullrepo(pwd);
 
 narginchk(1,5);
 
-if ~exist('update','var') || isempty(update)
-    update = false;
-end
-
-if ~exist('branch','var')
-    branch = '';
+if isempty(folPath) || (isstring(folPath) && strlength(folPath) == 0)
+    error("GIT:cloneorpullrepo:invalidInput", "Input folPath can not be empty.")
 end
 
 if ~exist('verbose','var') || isempty(verbose)
     verbose = true;
 end
 
+if ~exist('branch','var') || isempty(branch)
+    branch = "";
+else
+    branch = string(branch);
+end
+
+if ~exist('update','var')
+    update = false;
+else
+    if exist('repo','var') && ~isempty(repo) && (islogical(repo) || isnumeric(repo))
+        % input repo which previously was update seems to contain an update
+        % value
+        if ischar(update) || isstring(update)
+            % additionally input update seems to be a repo
+            tmp_repo = update;
+            update = repo;
+            repo = tmp_repo;
+        elseif isempty(update)
+            % update is empty
+            update = repo;
+        end
+        warning("GIT:cloneorpullrepo:inputOrder","Verify if inputs repo and update are swapped.");
+    end
+    update = logical(update);
+end
+
+if ~exist('repo','var')
+    repo = "";
+end
+repo = string(repo);
+
+if strcmp(folPath,".")
+    folPath = pwd;
+end
+
 if ~isfolder(folPath)
-    if nargin < 2 || isempty(repo)
-        repo = sprintf('https://github.com/Equinor/%s.git',folPath);
+    if strlength(repo) == 0
+        tmp_folpath = folPath;
+        if contains(tmp_folpath,filesep)
+            [~, tmp_folpath] = fileparts(tmp_folpath);
+        end
+        repo = sprintf('https://github.com/Equinor/%s.git',tmp_folpath);
     end
     git('clone',repo,folPath)
-    if ~isempty(branch) && ~strcmp(branch,'master')
+    if strlength(branch) > 0
         git(['checkout ' branch]);
     end
 elseif update
     currBranch = GIT.getCurrBranch(folPath);
 
-    if isempty(branch)
+    if strlength(branch) == 0
         branch = currBranch;
     end
 
@@ -112,6 +149,9 @@ end
                 TF = true;
             elseif contains(out,sprintf('Fast-forward%s',newline))
                 TF = true;
+                if verbose
+                    disp(out)
+                end
             else
                 % disp(out)
             end
