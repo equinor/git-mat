@@ -1,6 +1,6 @@
-function cloneorpullrepo(folPath,repo,update,branch,verbose)
+function cloneorpullrepo(folPath,update,repo,branch,verbose)
 % Clone or fetch repo
-% function cloneorpullrepo(folPath,repo,update,branch,verbose)
+% function cloneorpullrepo(folPath,update,repo,branch,verbose)
 %
 % INPUT:
 %  - folPath - Path to folder
@@ -15,75 +15,109 @@ function cloneorpullrepo(folPath,repo,update,branch,verbose)
 %
 % DESCRIPTION:
 % Hint: Call function from folder where repo shall be cloned and use
-% relative folder path
+% relative folder path.
+%
+% Will first try to pull using ff.
 %
 % EXAMPLE:
 % GIT.cloneorpullrepo(pwd);
 
 narginchk(1,5);
 
-if ~exist('update','var') || isempty(update)
-    update = false;
-end
-
-if ~exist('branch','var')
-    branch = '';
+if isempty(folPath) || (isstring(folPath) && strlength(folPath) == 0)
+    error("GIT:cloneorpullrepo:invalidInput", "Input folPath can not be empty.")
 end
 
 if ~exist('verbose','var') || isempty(verbose)
     verbose = true;
 end
 
-if ~isfolder(folPath)
-    if nargin < 2 || isempty(repo)
-        repo = sprintf('https://github.com/Equinor/%s.git',folPath);
-    end
-    git('clone',repo,folPath)
-    if ~isempty(branch) && ~strcmp(branch,'master')
-        git(['checkout ' branch]);
-    end
-elseif update
-    currBranch = GIT.getCurrBranch(folPath);
+if ~exist('branch','var')
+    branch = "";
+end
+branch = string(branch);
 
-    if isempty(branch)
-        branch = currBranch;
-    end
-
-    if ~strcmp(currBranch,branch)
-        warning('cloneorpullrepo:wrongBranch','Repo %s is not updated because local branch is %s, not %s',folPath,currBranch,branch);
-        return
-    end
-
-    if pull(true)
-        return
-    end
-
-    [ahead,behind] = GIT.compareRemote(folPath,currBranch);
-    if ahead < 0 && behind < 0
-        warning('cloneorpullrepo:localBranch','Repo %s, branch %s is only local. Not possible to update\n',folPath,branch);
-        return
-    end
-
-    if ahead > 0
-        warning('cloneorpullrepo:localAhead','Repo %s is not updated because local is ahead of remote',folPath);
-        return
-    end
-
-    if GIT.isdirty(folPath)
-        % todo: pull(true) could return output which actually knows what
-        % files would be overwritten
-        warning('cloneorpullrepo:dirtyTree','Repo %s is not updated because tree is dirty and local files would be overwritten by merge',folPath);
-        return
-    end
-
-    if behind > 0
-        pull(false);
+if ~exist('update','var')
+    update = false;
+else
+    if islogical(update) || isnumeric(update)
+        update = logical(update);
     else
-        if verbose
-            fprintf(1,'Repo %s, branch %s is already up to date\n',folPath,branch);
+        if exist('repo','var')
+
+        else
+
+        end
+        update = false;
+    end
+elseif isstring(update) || ischar(update)
+    if ~exist('repo','var')
+
+    end
+
+    if ~exist('repo','var')
+        repo = "";
+    end
+    repo = string(repo);
+
+    if strcmp(folPath,".")
+        folPath = pwd;
+    end
+
+    if ~isfolder(folPath)
+        if strlength(repo) == 0
+            tmp_folpath = folPath;
+            if contains(tmp_folpath,filesep)
+                [~, tmp_folpath] = fileparts(tmp_folpath);
+            end
+            repo = sprintf('https://github.com/Equinor/%s.git',tmp_folpath);
+        end
+        git('clone',repo,folPath)
+        if strlength(branch) == 0 && ~strcmp(branch,'master')
+            git(['checkout ' branch]);
+        end
+    elseif update
+        currBranch = GIT.getCurrBranch(folPath);
+
+        if isempty(branch)
+            branch = currBranch;
+        end
+
+        if ~strcmp(currBranch,branch)
+            warning('cloneorpullrepo:wrongBranch','Repo %s is not updated because local branch is %s, not %s',folPath,currBranch,branch);
+            return
+        end
+
+        if pull(true)
+            return
+        end
+
+        [ahead,behind] = GIT.compareRemote(folPath,currBranch);
+        if ahead < 0 && behind < 0
+            warning('cloneorpullrepo:localBranch','Repo %s, branch %s is only local. Not possible to update\n',folPath,branch);
+            return
+        end
+
+        if ahead > 0
+            warning('cloneorpullrepo:localAhead','Repo %s is not updated because local is ahead of remote',folPath);
+            return
+        end
+
+        if GIT.isdirty(folPath)
+            % todo: pull(true) could return output which actually knows what
+            % files would be overwritten
+            warning('cloneorpullrepo:dirtyTree','Repo %s is not updated because tree is dirty and local files would be overwritten by merge',folPath);
+            return
+        end
+
+        if behind > 0
+            pull(false);
+        else
+            if verbose
+                fprintf(1,'Repo %s, branch %s is already up to date\n',folPath,branch);
+            end
         end
     end
-end
 
     function TF = pull(ff)
         currDir = pwd;
@@ -112,6 +146,9 @@ end
                 TF = true;
             elseif contains(out,sprintf('Fast-forward%s',newline))
                 TF = true;
+                if verbose
+                    disp(out)
+                end
             else
                 % disp(out)
             end
