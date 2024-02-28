@@ -32,16 +32,18 @@ if ~exist('verbose','var') || isempty(verbose)
     verbose = true;
 end
 
-if ~exist('branch','var')
+if ~exist('branch','var') || isempty(branch)
     branch = "";
+else
+    branch = string(branch);
 end
-branch = string(branch);
 
 if ~exist('update','var')
     update = false;
 else
     if exist('repo','var') && ~isempty(repo) && (islogical(repo) || isnumeric(repo))
-        % input repo which previously was update seems to contain an order
+        % input repo which previously was update seems to contain an update
+        % value
         if ischar(update) || isstring(update)
             % additionally input update seems to be a repo
             tmp_repo = update;
@@ -74,13 +76,13 @@ if ~isfolder(folPath)
         repo = sprintf('https://github.com/Equinor/%s.git',tmp_folpath);
     end
     git('clone',repo,folPath)
-    if strlength(branch) == 0 && ~strcmp(branch,'master')
+    if strlength(branch) > 0
         git(['checkout ' branch]);
     end
 elseif update
     currBranch = GIT.getCurrBranch(folPath);
 
-    if isempty(branch)
+    if strlength(branch) == 0
         branch = currBranch;
     end
 
