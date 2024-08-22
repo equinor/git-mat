@@ -58,17 +58,18 @@ else
     update = logical(update);
 end
 
-if ~exist('repo','var')
+if ~exist('repo','var') || isempty(repo)
     repo = "";
+else
+    repo = string(repo);
 end
-repo = string(repo);
 
 if strcmp(folPath,".")
     folPath = pwd;
 end
 
 if ~isfolder(folPath)
-    if strlength(repo) == 0
+    if numel(repo) == 0 || strlength(repo) == 0
         tmp_folpath = folPath;
         if contains(tmp_folpath,filesep)
             [~, tmp_folpath] = fileparts(tmp_folpath);
