@@ -26,7 +26,7 @@ if ispc
     if isempty(folPath)
         error('gitbash:gitNotFound','Git is not found.');
     end
-    
+
     % What is the difference of these bash-windows?
     system(sprintf('start "" "%s" --login',fullfile(GIT.getBinFolder,'sh.exe')));
     %     system(sprintf('start "" "%s" --login',fullfile(GIT.getBinFolder,'bash.exe')));

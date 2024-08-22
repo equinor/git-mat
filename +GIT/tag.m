@@ -36,11 +36,11 @@ else
     if isnumeric(msg) || isempty(msg)
         error('GIT:tag:msgNotChar','Input msg must be text');
     end
-    
+
     currDir = pwd;
     c = onCleanup(@()cd(currDir));
     cd(folPath);
-    
+
     if nargin > 3 && ~isempty(commit)
         if isnumeric(commit)
             error('GIT:tag:commitNotChar','Input commit must be text');
@@ -48,24 +48,24 @@ else
         if ~ischar(commit)
             commit = char(commit);
         end
-        
+
         try
             currCheckout = GIT.getCurrBranch();
         catch
             currCheckout = char.empty;
         end
-        
+
         if isempty(currCheckout)
             % For instance if head is detached
             currCheckout = GIT.getCurrCommit();
         end
-        
+
         % This will output to command window
         c2 = onCleanup(@()git(['checkout ' currCheckout]));
-        
+
         % Checkout the commit that shall be tagged
         tmp = git(['checkout ' commit]); %#ok<NASGU>
-        
+
         if ispc
             % Get time stamp of commit
             [~,b] = git(['show -s --format=%aD ' commit]);
