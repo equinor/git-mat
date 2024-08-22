@@ -18,6 +18,7 @@ nargoutchk(0,2)
 
 if nargin > 0
     varargin = cellfun(@char,varargin,'UniformOutput',false);
+    varargin = varargin(~cellfun(@isempty,varargin));
 
     % Get the location of the git executable.
     gitPath = GIT.getBinFolder();
